@@ -124,7 +124,6 @@ namespace Saboten
                 var v = this.SabotenController.Vertices[index];
                 this.SabotenController.Vertices[index] = new Vector3(v.x, this.WorldPosition.y, v.z);
             }
-            Debug.Log(string.Format("[{0}] WorldPosition.y = {1}", this.Generation, this.WorldPosition.y));
         }
 
         public void PrintRecursive()

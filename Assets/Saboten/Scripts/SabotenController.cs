@@ -53,7 +53,7 @@ namespace Saboten
             this.Mesh = new Mesh();
 
             this.Vertices = this.GetVertices();
-            this.triangles = this.GetEdgeTriangles(this.splitNumber, this.frameNumber);
+            this.triangles = this.GetAllTriangles(this.Vertices, this.splitNumber, this.frameNumber);
             this.Mesh.SetVertices(Vertices);
             this.Mesh.SetTriangles(this.triangles, 0);
             this.meshFilter.mesh = this.Mesh;
@@ -126,20 +126,29 @@ namespace Saboten
             return new Vector3(Mathf.Cos(angle), y, Mathf.Sin(angle)) * radius;
         }
 
-        private int[] GetCoverTriangles(int splitNumber)
+        private List<int> GetAllTriangles(List<Vector3> vertices, int splitNumber, int frameNumber)
         {
-            var result = new int[(splitNumber - 1) * 3];
-            var v = 1;
-            var k = 0;
+            return this.GetCoverTriangles(vertices, splitNumber).Concat(this.GetEdgeTriangles(splitNumber, frameNumber)).ToList();
+        }
+
+        /// <summary>
+        /// フタ部分の三角形情報を返す
+        /// </summary>
+        private List<int> GetCoverTriangles(List<Vector3> vertices, int splitNumber)
+        {
+            var result = new int[splitNumber * 3];
+            var length = vertices.Count - 1;
             for (var i = 0; i < result.Length / 3; i++)
             {
-                result[(i * 3)] = 0;
-                result[(i * 3) + 1] = ((k + 1) % (splitNumber - 1)) + 1;
-                result[(i * 3) + 2] = v;
-                v++;
-                k++;
+                var x = i;
+                var y = (i + 1) % splitNumber;
+                var z = splitNumber;
+                result[(i * 3) + 0] = length - x;
+                result[(i * 3) + 1] = length - y;
+                result[(i * 3) + 2] = length - z;
             }
-            return result;
+
+            return result.ToList();
         }
 
         /// <summary>

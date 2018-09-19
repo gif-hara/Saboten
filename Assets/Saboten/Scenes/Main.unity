@@ -219,10 +219,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30567a0448ee34affa3b7f716c9ec680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splitNumber: 6
-  frameNumber: 3
+  splitNumber: 3
+  frameNumber: 2
   intervalY: 1
   radius: 1
+  growth: 0
   material: {fileID: 2100000, guid: 2da587b671a19450392fe86c7a2dac37, type: 2}
 --- !u!4 &1324162235
 Transform:
