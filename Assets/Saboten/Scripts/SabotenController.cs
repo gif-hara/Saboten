@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,6 +14,7 @@ namespace Saboten
     {
         [SerializeField][Range(3, 99999)]
         private int splitNumber;
+        public int SplitNumber { get { return this.splitNumber; } }
 
         [SerializeField][Range(2, 100)]
         private int frameNumber;
@@ -23,6 +25,9 @@ namespace Saboten
         [SerializeField]
         private float radius;
 
+        [SerializeField][Range(0.0f, 1.0f)]
+        private float growth;
+
         [SerializeField]
         private Material material;
 
@@ -32,38 +37,73 @@ namespace Saboten
 
         private Transform cachedTransform;
 
-        private Mesh mesh;
+        public Mesh Mesh { get; private set; }
+
+        private Node rootNode;
+
+        public List<Vector3> Vertices { get; private set; }
+
+        private List<int> triangles;
 
         void Start()
         {
             this.meshFilter = this.GetComponent<MeshFilter>();
             this.meshRenderer = this.GetComponent<MeshRenderer>();
             this.cachedTransform = this.transform;
-            this.mesh = new Mesh();
+            this.Mesh = new Mesh();
 
-            var vertices = this.GetVertices();
-            var triangles = this.GetEdgeTriangles(this.splitNumber, this.frameNumber);
-            this.mesh.vertices = vertices;
-            this.mesh.triangles = triangles;
-            this.meshFilter.mesh = this.mesh;
-            this.mesh.RecalculateNormals();
+            this.Vertices = this.GetVertices();
+            this.triangles = this.GetEdgeTriangles(this.splitNumber, this.frameNumber);
+            this.Mesh.SetVertices(Vertices);
+            this.Mesh.SetTriangles(this.triangles, 0);
+            this.meshFilter.mesh = this.Mesh;
+            this.Mesh.RecalculateNormals();
             this.meshRenderer.sharedMaterial = this.material;
+
+            Node node = null;
+            for (var i = 0; i < this.frameNumber; i++)
+            {
+                node = new Node(
+                    node,
+                    this,
+                    Vector3.up,
+                    i * this.splitNumber,
+                    i,
+                    1.0f
+                    );
+                if(i == 0)
+                {
+                    this.rootNode = node;
+                }
+            }
+
+            this.rootNode.PrintRecursive();
         }
 
         void OnDrawGizmos()
         {
-            if(this.mesh == null)
+            if(this.Mesh == null)
             {
                 return;
             }
             Gizmos.color = Color.magenta;
-            foreach(var v in this.mesh.vertices)
+            foreach(var v in this.Mesh.vertices)
             {
                 Gizmos.DrawSphere(v, 0.05f);
             }
         }
 
-        private Vector3[] GetVertices()
+        void OnValidate()
+        {
+            if(this.rootNode == null)
+            {
+                return;
+            }
+            this.rootNode.SetGrowthRecursive(this.growth);
+            this.Mesh.SetVertices(this.Vertices);
+        }
+
+        private List<Vector3> GetVertices()
         {
             var result = new Vector3[(this.splitNumber * this.frameNumber) + 1];
             var r = 360.0f;
@@ -77,7 +117,7 @@ namespace Saboten
             }
 
             result[result.Length - 1] = new Vector3(0.0f, (this.frameNumber - 1) * this.intervalY, 0.0f);
-            return result;
+            return result.ToList();
         }
 
         private Vector3 GetVertice(float angle, float radius, float y)
@@ -105,7 +145,7 @@ namespace Saboten
         /// <summary>
         /// 側面の三角形情報を返す
         /// </summary>
-        private int[] GetEdgeTriangles(int splitNumber, int frameNumber)
+        private List<int> GetEdgeTriangles(int splitNumber, int frameNumber)
         {
             if(frameNumber <= 1)
             {
@@ -131,7 +171,7 @@ namespace Saboten
                 result[(i * 6) + 4] = a;
             }
 
-            return result;
+            return result.ToList();
         }
     }
 }
