@@ -76,8 +76,23 @@ namespace Saboten
                     this.rootNode = node;
                 }
             }
+        }
 
-            this.rootNode.PrintRecursive();
+        void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.Q))
+            {
+                var lastChildren = this.rootNode.Ends;
+                foreach(var c in lastChildren)
+                {
+                    Debug.Log(string.Format("[{0}]", c.Generation));
+                    this.NewGeneration(c);
+                }
+            }
+            if(Input.GetKeyDown(KeyCode.W))
+            {
+                this.rootNode.PrintRecursive();
+            }
         }
 
         void OnDrawGizmos()
@@ -101,6 +116,25 @@ namespace Saboten
             }
             this.rootNode.SetGrowthRecursive(this.growth);
             this.Mesh.SetVertices(this.Vertices);
+        }
+
+        public void NewGeneration(Node parent)
+        {
+            this.frameNumber++;
+            this.Vertices = this.GetVertices();
+            this.triangles = this.GetAllTriangles(this.Vertices, this.splitNumber, this.frameNumber);
+            this.Mesh.SetVertices(Vertices);
+            this.Mesh.SetTriangles(this.triangles, 0);
+            this.Mesh.RecalculateNormals();
+            var generation = parent.Generation + 1;
+            var child = new Node(
+                parent,
+                this,
+                Vector3.up,
+                generation * this.splitNumber,
+                generation,
+                1.0f
+                );
         }
 
         private List<Vector3> GetVertices()

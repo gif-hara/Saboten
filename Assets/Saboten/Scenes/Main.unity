@@ -219,8 +219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30567a0448ee34affa3b7f716c9ec680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splitNumber: 3
-  frameNumber: 2
+  splitNumber: 4
+  frameNumber: 4
   intervalY: 1
   radius: 1
   growth: 0

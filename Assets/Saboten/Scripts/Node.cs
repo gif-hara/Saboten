@@ -90,6 +90,27 @@ namespace Saboten
             }
         }
 
+        public List<Node> Ends
+        {
+            get
+            {
+                var result = new List<Node>();
+                if(!this.IsEnd)
+                {
+                    foreach(var c in this.Children)
+                    {
+                        result.AddRange(c.Ends);
+                    }
+                }
+                else
+                {
+                    result.Add(this);
+                }
+
+                return result;
+            }
+        }
+
         public void SetGrowthRecursive(float value)
         {
             this.Growth = value;
@@ -128,11 +149,26 @@ namespace Saboten
 
         public void PrintRecursive()
         {
-            Debug.Log(string.Format("[{0}]", this.Generation));
+            Debug.Log(this.ToString());
             foreach(var child in this.Children)
             {
                 child.PrintRecursive();
             }
+        }
+
+        public override string ToString()
+        {
+            return new
+            {
+                Generation = this.Generation,
+                ChildrenCount = this.Children.Count,
+                Up = this.Up,
+                LocalPosition = this.LocalPosition,
+                WorldPosition = this.WorldPosition,
+                VerticesStartIndex = this.VerticesStartIndex,
+                LengthMax = this.LengthMax,
+                Growth = this.Growth
+            }.ToString();
         }
     }
 }
