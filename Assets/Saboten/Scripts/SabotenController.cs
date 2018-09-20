@@ -35,8 +35,6 @@ namespace Saboten
 
         private MeshRenderer meshRenderer;
 
-        private Transform cachedTransform;
-
         public Mesh Mesh { get; private set; }
 
         private Node rootNode;
@@ -49,7 +47,6 @@ namespace Saboten
         {
             this.meshFilter = this.GetComponent<MeshFilter>();
             this.meshRenderer = this.GetComponent<MeshRenderer>();
-            this.cachedTransform = this.transform;
             this.Mesh = new Mesh();
 
             this.Vertices = this.GetVertices();
@@ -127,7 +124,7 @@ namespace Saboten
             this.Mesh.SetTriangles(this.triangles, 0);
             this.Mesh.RecalculateNormals();
             var generation = parent.Generation + 1;
-            var child = new Node(
+            new Node(
                 parent,
                 this,
                 Vector3.up,
