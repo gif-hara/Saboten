@@ -30,6 +30,8 @@ namespace Saboten
 
         public float LengthMax { get; private set; }
 
+        public float RadiusMax { get; private set; }
+
         public float Growth { get; private set; }
 
         public Node(
@@ -39,6 +41,7 @@ namespace Saboten
             int verticesStartIndex,
             int generation,
             float lengthMax,
+            float radiusMax,
             float growth
             )
         {
@@ -49,6 +52,7 @@ namespace Saboten
             this.VerticesStartIndex = verticesStartIndex;
             this.Generation = generation;
             this.LengthMax = lengthMax;
+            this.RadiusMax = radiusMax;
             this.Growth = growth;
             if (this.Parent != null)
             {
@@ -125,7 +129,6 @@ namespace Saboten
             {
                 this.SabotenController.NewGeneration(this);
             }
-            this.UpdateVertices();
             foreach (var c in this.Children)
             {
                 c.AddGrowthChild(value, this.WorldPosition);
@@ -141,10 +144,18 @@ namespace Saboten
                 this.SabotenController.NewGeneration(this);
             }
             this.WorldPosition = parentWorldPosition + this.ToPosition;
-            this.UpdateVertices();
             foreach (var c in this.Children)
             {
                 c.AddGrowthChild(value, this.WorldPosition);
+            }
+        }
+
+        public void UpdateVerticesRecursive()
+        {
+            this.UpdateVertices();
+            foreach (var c in this.Children)
+            {
+                c.UpdateVerticesRecursive();
             }
         }
 
@@ -179,10 +190,15 @@ namespace Saboten
 
         private void UpdateVertices()
         {
-            for (var i = 0; i < this.SabotenController.SplitNumber; i++)
+            var r = 360.0f;
+            var s = this.SabotenController.SplitNumber;
+            var a = r / s;
+            var radius = this.RadiusMax * this.Growth;
+            for (var i = 0; i < s; i++)
             {
-                var v = this.SabotenController.Vertices[this.VerticesStartIndex + i];
-                this.SabotenController.Vertices[this.VerticesStartIndex + i] = new Vector3(v.x, this.WorldPosition.y, v.z);
+                var angle = (a * i) * Mathf.Deg2Rad;
+                var v = new Vector3(Mathf.Cos(angle) * radius, this.WorldPosition.y, Mathf.Sin(angle) * radius);
+                this.SabotenController.Vertices[this.VerticesStartIndex + i] = v;
             }
             if(this.IsEnd)
             {

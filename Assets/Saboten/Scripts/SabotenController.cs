@@ -70,6 +70,7 @@ namespace Saboten
                     i * this.splitNumber,
                     i,
                     1.0f,
+                    this.radius,
                     this.initialGrowth
                     );
                 if(i == 0)
@@ -97,7 +98,9 @@ namespace Saboten
             if(Input.GetKey(KeyCode.Space))
             {
                 this.rootNode.AddGrowthRecursive(this.growthVelocity * Time.deltaTime);
+                this.rootNode.UpdateVerticesRecursive();
                 this.Mesh.SetVertices(this.Vertices);
+                this.Mesh.RecalculateNormals();
             }
         }
 
@@ -130,25 +133,20 @@ namespace Saboten
                 generation * this.splitNumber,
                 generation,
                 1.0f,
+                this.radius,
                 0.0f
                 );
         }
 
         private List<Vector3> GetVertices()
         {
-            var result = new Vector3[(this.splitNumber * this.frameNumber) + 1];
-            var r = 360.0f;
-            var a = r / this.splitNumber;
-            for (var k = 0; k < this.frameNumber; k++)
+            var capacity = (this.splitNumber * this.frameNumber) + 1;
+            var result = new List<Vector3>(capacity);
+            for (var i = 0; i < (this.splitNumber * this.frameNumber) + 1; i++)
             {
-                for (var i = 0; i < this.splitNumber; i++)
-                {
-                    result[(k * this.splitNumber) + i] = this.GetVertice(a * i, this.radius, this.intervalY * k);
-                }
+                result.Add(new Vector3());
             }
-
-            result[result.Length - 1] = new Vector3(0.0f, (this.frameNumber - 1) * this.intervalY, 0.0f);
-            return result.ToList();
+            return result;
         }
 
         private Vector3 GetVertice(float angle, float radius, float y)
