@@ -90,6 +90,9 @@ namespace Saboten
             }
         }
 
+        /// <summary>
+        /// 末端のノードを返す
+        /// </summary>
         public List<Node> Ends
         {
             get
@@ -111,8 +114,12 @@ namespace Saboten
             }
         }
 
+        /// <summary>
+        /// 子ノードを含めた成長値を設定する
+        /// </summary>
         public void SetGrowthRecursive(float value)
         {
+            Assert.IsTrue(this.IsRoot);
             this.Growth = value;
             this.UpdateVertices();
             foreach(var c in this.Children)
@@ -121,8 +128,12 @@ namespace Saboten
             }
         }
 
+        /// <summary>
+        /// 子ノードの成長値を設定する
+        /// </summary>
         private void SetGrowthChild(float value, Vector3 parentWorldPosition)
         {
+            Assert.IsFalse(this.IsRoot);
             this.Growth = value;
             this.WorldPosition = parentWorldPosition + this.ToPosition;
             this.UpdateVertices();
