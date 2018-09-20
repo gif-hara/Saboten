@@ -38,7 +38,9 @@ namespace Saboten
             Vector3 up,
             int verticesStartIndex,
             int generation,
-            float lengthMax)
+            float lengthMax,
+            float growth
+            )
         {
             this.Parent = parent;
             this.Children = new List<Node>();
@@ -47,6 +49,7 @@ namespace Saboten
             this.VerticesStartIndex = verticesStartIndex;
             this.Generation = generation;
             this.LengthMax = lengthMax;
+            this.Growth = growth;
             if (this.Parent != null)
             {
                 this.Parent.Children.Add(this);
@@ -111,6 +114,37 @@ namespace Saboten
                 }
 
                 return result;
+            }
+        }
+
+        public void AddGrowthRecursive(float value)
+        {
+            Assert.IsTrue(this.IsRoot);
+            this.Growth = Mathf.Min(this.Growth + value, 1.0f);
+            if (this.IsEnd && this.Growth >= 0.5f)
+            {
+                this.SabotenController.NewGeneration(this);
+            }
+            this.UpdateVertices();
+            foreach (var c in this.Children)
+            {
+                c.AddGrowthChild(value, this.WorldPosition);
+            }
+        }
+
+        private void AddGrowthChild(float value, Vector3 parentWorldPosition)
+        {
+            Assert.IsFalse(this.IsRoot);
+            this.Growth = Mathf.Min(this.Growth + value, 1.0f);
+            if (this.IsEnd && this.Growth >= 0.5f)
+            {
+                this.SabotenController.NewGeneration(this);
+            }
+            this.WorldPosition = parentWorldPosition + this.ToPosition;
+            this.UpdateVertices();
+            foreach (var c in this.Children)
+            {
+                c.AddGrowthChild(value, this.WorldPosition);
             }
         }
 

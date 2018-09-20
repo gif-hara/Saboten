@@ -26,7 +26,10 @@ namespace Saboten
         private float radius;
 
         [SerializeField][Range(0.0f, 1.0f)]
-        private float growth;
+        private float initialGrowth;
+
+        [SerializeField]
+        private float growthVelocity;
 
         [SerializeField]
         private Material material;
@@ -66,7 +69,8 @@ namespace Saboten
                     Vector3.up,
                     i * this.splitNumber,
                     i,
-                    1.0f
+                    1.0f,
+                    this.initialGrowth
                     );
                 if(i == 0)
                 {
@@ -90,6 +94,11 @@ namespace Saboten
             {
                 this.rootNode.PrintRecursive();
             }
+            if(Input.GetKey(KeyCode.Space))
+            {
+                this.rootNode.AddGrowthRecursive(this.growthVelocity * Time.deltaTime);
+                this.Mesh.SetVertices(this.Vertices);
+            }
         }
 
         void OnDrawGizmos()
@@ -103,16 +112,6 @@ namespace Saboten
             {
                 Gizmos.DrawSphere(v, 0.05f);
             }
-        }
-
-        void OnValidate()
-        {
-            if(this.rootNode == null)
-            {
-                return;
-            }
-            this.rootNode.SetGrowthRecursive(this.growth);
-            this.Mesh.SetVertices(this.Vertices);
         }
 
         public void NewGeneration(Node parent)
@@ -130,7 +129,8 @@ namespace Saboten
                 Vector3.up,
                 generation * this.splitNumber,
                 generation,
-                1.0f
+                1.0f,
+                0.0f
                 );
         }
 
