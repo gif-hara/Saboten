@@ -219,12 +219,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30567a0448ee34affa3b7f716c9ec680, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splitNumber: 6
+  splitNumber: 20
   frameNumber: 2
-  intervalY: 1
-  radius: 1
-  initialGrowth: 0
-  growthVelocity: 1
+  length:
+    min: 0.9
+    max: 1.1
+  radius:
+    min: 0.9
+    max: 1.1
+  initialGrowth: 0.3
+  growthVelocity: 0.3
   material: {fileID: 2100000, guid: 2da587b671a19450392fe86c7a2dac37, type: 2}
 --- !u!4 &1324162235
 Transform:
@@ -253,8 +257,8 @@ MeshRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1324162233}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1

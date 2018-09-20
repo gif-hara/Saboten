@@ -20,10 +20,10 @@ namespace Saboten
         private int frameNumber;
 
         [SerializeField]
-        private float intervalY;
+        private RandomRange length;
 
         [SerializeField]
-        private float radius;
+        private RandomRange radius;
 
         [SerializeField][Range(0.0f, 1.0f)]
         private float initialGrowth;
@@ -69,8 +69,8 @@ namespace Saboten
                     Vector3.up,
                     i * this.splitNumber,
                     i,
-                    1.0f,
-                    this.radius,
+                    this.length.Evalute,
+                    this.radius.Evalute,
                     this.initialGrowth
                     );
                 if(i == 0)
@@ -132,8 +132,8 @@ namespace Saboten
                 Vector3.up,
                 generation * this.splitNumber,
                 generation,
-                1.0f,
-                this.radius,
+                this.length.Evalute,
+                this.radius.Evalute,
                 0.0f
                 );
         }
